@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic__svg_logout.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_baseline_done_all_24.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_svg_carbon_password.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_svg_user.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/round_corner_top.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_login.xml" value="0.207035175879397" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_register.xml" value="0.22" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_splash.xml" value="0.22" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/add_new_task_layout.xml" value="0.22" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/task_layout.xml" value="0.4466666666666667" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/menu/top_menu.xml" value="0.1796875" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
