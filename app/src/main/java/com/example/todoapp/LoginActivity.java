@@ -36,9 +36,21 @@ public class LoginActivity extends AppCompatActivity {
         binding.btnLogLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                boolean empty = false;
                 String username = binding.edtLogEmail.getText().toString().trim();
                 String password = binding.edtLogPassword.getText().toString().trim();
+
+                if(username.isEmpty()){
+                    binding.edtLogEmail.setError("Fill username");
+                    empty = true;
+                }
+                if(password.isEmpty()){
+                    binding.edtLogPassword.setError("Fill password");
+                    empty = true;
+                }
+                if(empty){
+                    return;
+                }
 
                 User user = new User();
                 user.setUsername(username);
@@ -54,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     Snackbar.make(binding.btnLogLogin, "Successfully Logged in!", Snackbar.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-//                    finish();
+                    finish();
 
                 } else {
 

@@ -3,12 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable-v24/round_corner_all.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic__svg_logout.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_baseline_done_all_24.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_svg_carbon_password.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/ic_svg_user.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/round_corner_all.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/drawable/round_corner_top.xml" value="0.19583333333333333" />
-        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_login.xml" value="0.207035175879397" />
+        <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_login.xml" value="0.5" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_register.xml" value="0.22" />
         <entry key="..\:/AndroidStudioFile/ToDoApp/app/src/main/res/layout/activity_splash.xml" value="0.22" />

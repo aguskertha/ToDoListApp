@@ -26,7 +26,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private Button btnAddTask;
     private DataBaseHelper db;
     private int userID;
-    //AD
+
     public AddNewTask(int userID){
         this.userID = userID;
     }

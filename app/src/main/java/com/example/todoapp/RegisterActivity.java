@@ -25,11 +25,19 @@ public class RegisterActivity extends AppCompatActivity {
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.tvRegLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
 
         db = new DataBaseHelper(getApplicationContext());
         binding.btnLogRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean empty = false;
                 String username = binding.edtRegUsername.getText().toString().trim();
                 String fullname = binding.edtRegName.getText().toString().trim();
                 String password = binding.edtRegPassword.getText().toString().trim();
@@ -37,18 +45,28 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if(fullname.isEmpty()){
                     binding.edtRegName.setError("Fill fullname");
-                    return;
+                    empty = true;
                 }
                 if(username.isEmpty()){
                     binding.edtRegUsername.setError("Fill username");
-                    return;
+                    empty = true;
                 }
-                if(password.isEmpty() || confirmPassword.isEmpty()){
+                if(password.isEmpty()){
                     binding.edtRegPassword.setError("Fill password");
+                    empty = true;
+                }
+                if(confirmPassword.isEmpty()){
                     binding.edtRegConfirmPass.setError("Fill confirm password");
+                    empty = true;
+                }
+                if(!password.equals(confirmPassword)){
+                    binding.edtRegConfirmPass.setError("Password not match");
+                    binding.edtRegPassword.setError("Password not match");
+                    empty = true;
+                }
+                if(empty){
                     return;
                 }
-
                 User user = new User();
                 user.setUsername(username);
                 user.setFullname(fullname);
@@ -57,6 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Successful created account", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
+                    finish();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Wrong input!!!", Toast.LENGTH_SHORT).show();
@@ -65,4 +84,5 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
     }
+
 }

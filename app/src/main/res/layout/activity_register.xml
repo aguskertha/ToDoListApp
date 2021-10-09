@@ -109,7 +109,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@color/black"
+                android:background="@drawable/round_corner_all"
                 android:fontFamily="@font/josefin_sans_semibold"
                 android:text="Daftar"
                 android:textAllCaps="false"
@@ -171,7 +171,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/btn_log_register" />
 
             <TextView
-                android:id="@+id/tv_log_lupapassword"
+                android:id="@+id/tv_reg_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
