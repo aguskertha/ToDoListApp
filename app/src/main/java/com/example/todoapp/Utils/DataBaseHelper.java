@@ -109,42 +109,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TODO_TASK, task);
         db.update(TABLE_TODO, values, "ID=?", new String[]{String.valueOf(id)});
     }
-//
+
     public void updateStatus(int id, int status){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_TODO_STATUS, status);
         db.update(TABLE_TODO, values, "ID=?", new String[]{String.valueOf(id)});
     }
-//
+
     public void deleteTask(int id){
         db = this.getWritableDatabase();
         db.delete(TABLE_TODO, "ID=?", new String[]{String.valueOf(id)});
         db.close();
     }
-//
+
     public User Authenticate(User user) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USER,// Selecting Table
+        Cursor cursor = db.query(TABLE_USER,
                 new String[]{KEY_ID, KEY_USER_USERNAME, KEY_USER_PASSWORD, KEY_USER_FULLNAME},//Selecting columns want to query
                 KEY_USER_USERNAME + "=?",
-                new String[]{user.getUsername()},//Where clause
+                new String[]{user.getUsername()},
                 null, null, null);
 
         if (cursor != null && cursor.moveToFirst()&& cursor.getCount()>0) {
-            //if cursor has value then in user database there is user associated with this given email
             User newUser = new User();
             newUser.setId(cursor.getInt(0));
             newUser.setUsername(cursor.getString(1));
             newUser.setPassword(cursor.getString(2));
             newUser.setFullname(cursor.getString(3));
-            //Match both passwords check they are same or not
             if (user.getPassword().equalsIgnoreCase(newUser.getPassword())) {
                 return newUser;
             }
         }
-
-        //if user password does not matches or there is no record with that email then return @false
         return null;
     }
     @SuppressLint("Range")
@@ -155,7 +151,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try{
-
             cursor = db.query(TABLE_TODO,
                     null,
                     KEY_TODO_USER_ID + "=?",

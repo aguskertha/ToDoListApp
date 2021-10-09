@@ -2,7 +2,6 @@ package com.example.todoapp.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +9,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.todoapp.AddNewTask;
 import com.example.todoapp.MainActivity;
 import com.example.todoapp.Model.ToDoModel;
@@ -45,7 +41,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
 
     public void deleteTask(int position){
         ToDoModel task = modelList.get(position);
-//        Toast.makeText(getContext(), "POS: "+position+" <> ID: "+task.getId(), Toast.LENGTH_SHORT).show();
         db.deleteTask(task.getId());
         modelList.remove(position);
         notifyItemRemoved(position);
@@ -61,9 +56,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
         AddNewTask newTask = new AddNewTask();
         newTask.setArguments(bundle);
         newTask.show(activity.getSupportFragmentManager(), newTask.TAG);
-
     }
-
 
     @NonNull
     @Override
@@ -92,13 +85,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
         holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 deleteTask(holder.getAdapterPosition());
-//                int i=0;
-//                for(ToDoModel toDoModel : modelList){
-//                    System.out.println("NOW: "+i);
-//                    i++;
-//                }
             }
         });
 

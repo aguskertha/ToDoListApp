@@ -1,10 +1,8 @@
 package com.example.todoapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +18,6 @@ import com.example.todoapp.Adapter.ToDoAdapter;
 import com.example.todoapp.Model.ToDoModel;
 import com.example.todoapp.Utils.DataBaseHelper;
 import com.example.todoapp.databinding.ActivityMainBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         binding.toolbar.setTitle("Task To Do List");
         setSupportActionBar(binding.toolbar);
 
-
         DebugDB.getAddressLog();
         db = new DataBaseHelper(MainActivity.this);
 
@@ -65,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
             Collections.reverse(modelList);
             toDoAdapter.setTask(modelList);
 
-
             binding.flAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -73,10 +68,6 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
                 }
             });
         }
-
-
-
-
     }
 
     @Override

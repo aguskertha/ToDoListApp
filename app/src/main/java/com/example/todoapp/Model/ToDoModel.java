@@ -1,6 +1,12 @@
 package com.example.todoapp.Model;
 
 public class ToDoModel {
+
+    private String task;
+    private int id;
+    private int status;
+    private int userID;
+
     public String getTask() {
         return task;
     }
@@ -24,11 +30,6 @@ public class ToDoModel {
     public void setStatus(int status) {
         this.status = status;
     }
-
-    private String task;
-    private int id;
-    private int status;
-    private int userID;
 
     public int getUserID() {
         return userID;
