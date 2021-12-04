@@ -1,0 +1,131 @@
+@startuml
+class com.example.todoapp.Model.ToDoModel {
+- String task
+- int id
+- int status
+- int userID
++ String getTask()
++ void setTask(String)
++ int getId()
++ void setId(int)
++ int getStatus()
++ void setStatus(int)
++ int getUserID()
++ void setUserID(int)
+}
+class com.example.todoapp.Adapter.ToDoAdapter {
+- List<ToDoModel> modelList
+- MainActivity activity
+- DataBaseHelper db
++ Context getContext()
++ void setTask(List<ToDoModel>)
++ void deleteTask(int)
++ void editTask(int)
++ ToDoViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ToDoViewHolder,int)
++ boolean toBoolean(int)
++ int getItemCount()
+}
+class com.example.todoapp.Adapter.ToDoAdapter.ToDoViewHolder {
+~ CheckBox checkBoxTask
+~ ImageButton imageButtonDelete
+~ ImageButton imageButtonEdit
+}
+class com.example.todoapp.SplashActivity {
+- SharedPreferences getSession
+# void onCreate(Bundle)
+}
+interface com.example.todoapp.OnDialogCloseListener {
+~ void onDialogClose(DialogInterface)
+}
+class com.example.todoapp.AddNewTask {
++ {static} String TAG
+- EditText edtTask
+- Button btnAddTask
+- DataBaseHelper db
+- int userID
++ {static} AddNewTask newInstance(int)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void onViewCreated(View,Bundle)
++ void onDismiss(DialogInterface)
+}
+class com.example.todoapp.Model.User {
+- int id
+- String username
+- String password
+- String fullname
++ int getId()
++ void setId(int)
++ String getUsername()
++ void setUsername(String)
++ String getPassword()
++ void setPassword(String)
++ String getFullname()
++ void setFullname(String)
+}
+class com.example.todoapp.LoginActivity {
++ {static} String SESSION_USER_ID
++ {static} String SESSION_USER_FULLNAME
++ {static} String SESSION_LOGIN_USER
+- ActivityLoginBinding binding
+- DataBaseHelper db
+- SharedPreferences.Editor setSession
+# void onCreate(Bundle)
+}
+class com.example.todoapp.MainActivity {
+- DataBaseHelper db
+- List<ToDoModel> modelList
+- ToDoAdapter toDoAdapter
+- ActivityMainBinding binding
+- SharedPreferences getSession
+- int userID
+# void onCreate(Bundle)
++ void onDialogClose(DialogInterface)
++ boolean onCreateOptionsMenu(Menu)
++ boolean onOptionsItemSelected(MenuItem)
+}
+class com.example.todoapp.Utils.DataBaseHelper {
+- SQLiteDatabase db
+- {static} String DATABASE_NAME
+- {static} String TABLE_TODO
+- {static} String TABLE_USER
+- {static} String KEY_ID
+- {static} String KEY_CREATED_AT
+- {static} String KEY_TODO_TASK
+- {static} String KEY_TODO_STATUS
+- {static} String KEY_TODO_USER_ID
+- {static} String KEY_USER_USERNAME
+- {static} String KEY_USER_PASSWORD
+- {static} String KEY_USER_FULLNAME
+- {static} String CREATE_TABLE_TODO
+- {static} String CREATE_TABLE_USER
+- {static} String DROP_TABLE_USER
+- {static} String DROP_TABLE_TODO
++ void onCreate(SQLiteDatabase)
++ void onUpgrade(SQLiteDatabase,int,int)
++ void insertTask(ToDoModel)
++ boolean insertUser(User)
++ void updateTask(int,String)
++ void updateStatus(int,int)
++ void deleteTask(int)
++ User Authenticate(User)
++ List<ToDoModel> getTaskByUserID(int)
+}
+class com.example.todoapp.RegisterActivity {
+- ActivityRegisterBinding binding
+- DataBaseHelper db
+# void onCreate(Bundle)
+}
+
+
+com.example.todoapp.Adapter.Adapter <|-- com.example.todoapp.Adapter.ToDoAdapter
+com.example.todoapp.Adapter.ToDoAdapter +.. com.example.todoapp.Adapter.ToDoAdapter.ToDoViewHolder
+com.example.todoapp.Adapter.ViewHolder <|-- com.example.todoapp.Adapter.ToDoAdapter.ToDoViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.example.todoapp.SplashActivity
+com.google.android.material.bottomsheet.BottomSheetDialogFragment <|-- com.example.todoapp.AddNewTask
+androidx.appcompat.app.AppCompatActivity <|-- com.example.todoapp.LoginActivity
+com.example.todoapp.OnDialogCloseListener <|.. com.example.todoapp.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.example.todoapp.MainActivity
+android.database.sqlite.SQLiteOpenHelper <|-- com.example.todoapp.Utils.DataBaseHelper
+androidx.appcompat.app.AppCompatActivity <|-- com.example.todoapp.RegisterActivity
+@enduml
