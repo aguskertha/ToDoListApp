@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     setSession.putInt(SESSION_USER_ID, currentUser.getId());
                     setSession.putString(SESSION_USER_FULLNAME, currentUser.getFullname());
+
                     setSession.apply();
 
                     Snackbar.make(binding.btnLogLogin, "Successfully Logged in!", Snackbar.LENGTH_LONG).show();
