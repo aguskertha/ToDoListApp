@@ -96,4 +96,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }
