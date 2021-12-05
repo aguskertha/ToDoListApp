@@ -9,9 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.example.todoapp.Model.ToDoModel;
+import com.example.todoapp.Model.Task;
+import com.example.todoapp.Model.Topic;
 import com.example.todoapp.Model.User;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,29 +22,44 @@ import java.util.List;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase db;
-    private static final String DATABASE_NAME = "TODO";
+    private static final String DATABASE_NAME = "TWODO";
 
-    private static final String TABLE_TODO = "TODO_TABLE";
+    private static final String TABLE_TASK = "TASK_TABLE";
+    private static final String TABLE_TOPIC = "TOPIC_TABLE";
     private static final String TABLE_USER = "USER_TABLE";
 
     private static final String KEY_ID = "ID";
     private static final String KEY_CREATED_AT = "CREATED_AT";
 
-    private static final String KEY_TODO_TASK = "TASK";
-    private static final String KEY_TODO_STATUS = "STATUS";
-    private static final String KEY_TODO_USER_ID = "USER_ID";
+    private static final String KEY_TASK_TITLE = "TITLE";
+    private static final String KEY_TASK_STATUS = "STATUS";
+    private static final String KEY_TASK_DEADLINE = "DEADLINE";
+    private static final String KEY_TASK_TOPIC_ID = "TOPIC_ID";
+
+    private static final String KEY_TOPIC_TITLE = "TITLE";
+    private static final String KEY_TOPIC_DESCRIPTION = "DESCRIPTION";
+    private static final String KEY_TOPIC_USER_ID = "USER_ID";
 
     private static final String KEY_USER_USERNAME = "USERNAME";
     private static final String KEY_USER_PASSWORD = "PASSWORD";
     private static final String KEY_USER_FULLNAME = "FULLNAME";
 
-    private static final String CREATE_TABLE_TODO = "CREATE TABLE IF NOT EXISTS "
-            + TABLE_TODO + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_TODO_TASK+" TEXT,"
-            + KEY_TODO_STATUS+" INTEGER,"
+    private static final String CREATE_TABLE_TASK = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_TASK + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_TASK_TITLE+" TEXT,"
+            + KEY_TASK_STATUS+" INTEGER,"
+            + KEY_TASK_DEADLINE+" DEADLINE,"
             + KEY_CREATED_AT+" DATETIME,"
-            + KEY_TODO_USER_ID + " INTEGER,"
-            + "FOREIGN KEY ("+KEY_TODO_USER_ID+") REFERENCES "+TABLE_USER+"("+KEY_ID+"));";
+            + KEY_TASK_TOPIC_ID + " INTEGER,"
+            + "FOREIGN KEY ("+KEY_TASK_TOPIC_ID+") REFERENCES "+TABLE_TOPIC+"("+KEY_ID+"));";
+
+    private static final String CREATE_TABLE_TOPIC = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_TOPIC + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_TOPIC_TITLE+" TEXT,"
+            + KEY_TOPIC_DESCRIPTION+" TEXT,"
+            + KEY_CREATED_AT+" DATETIME,"
+            + KEY_TOPIC_USER_ID + " INTEGER,"
+            + "FOREIGN KEY ("+KEY_TOPIC_USER_ID+") REFERENCES "+TABLE_USER+"("+KEY_ID+"));";
 
     private static final String CREATE_TABLE_USER = "CREATE TABLE IF NOT EXISTS "
             + TABLE_USER + "(" +KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -52,7 +69,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             + KEY_CREATED_AT+" DATETIME)";
 
     private static final String DROP_TABLE_USER = "DROP TABLE IF EXISTS " + TABLE_USER;
-    private static final String DROP_TABLE_TODO = "DROP TABLE IF EXISTS " + TABLE_TODO;
+    private static final String DROP_TABLE_TASK = "DROP TABLE IF EXISTS " + TABLE_TASK;
+    private static final String DROP_TABLE_TOPIC = "DROP TABLE IF EXISTS " + TABLE_TOPIC;
 
     public DataBaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -60,27 +78,43 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE_TODO);
         db.execSQL(CREATE_TABLE_USER);
+        db.execSQL(CREATE_TABLE_TOPIC);
+        db.execSQL(CREATE_TABLE_TASK);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL(DROP_TABLE_USER);
-        db.execSQL(DROP_TABLE_TODO);
+        db.execSQL(DROP_TABLE_TOPIC);
+        db.execSQL(DROP_TABLE_TASK);
         onCreate(db);
     }
 
-    public void insertTask(ToDoModel model){
+    public void insertTask(Task task){
+        db = this.getWritableDatabase();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateDeadlineFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = new Date();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TASK_TITLE, task.getTitle());
+        values.put(KEY_TASK_STATUS, 0);
+        values.put(KEY_TASK_DEADLINE, dateDeadlineFormat.format(task.getDeadline() ));
+        values.put(KEY_CREATED_AT, dateFormat.format(date));
+        values.put(KEY_TASK_TOPIC_ID, task.getTopicID() );
+        db.insert(TABLE_TASK, null, values);
+    }
+
+    public void insertTopic(Topic topic){
         db = this.getWritableDatabase();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         ContentValues values = new ContentValues();
-        values.put(KEY_TODO_TASK, model.getTask());
-        values.put(KEY_TODO_STATUS, 0);
+        values.put(KEY_TOPIC_TITLE, topic.getTitle());
+        values.put(KEY_TOPIC_DESCRIPTION, topic.getDescription());
         values.put(KEY_CREATED_AT, dateFormat.format(date));
-        values.put(KEY_TODO_USER_ID, model.getUserID() );
-        db.insert(TABLE_TODO, null, values);
+        values.put(KEY_TOPIC_USER_ID, topic.getUserID());
+        db.insert(TABLE_TOPIC, null, values);
     }
 
     public boolean insertUser(User model){
@@ -103,23 +137,39 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return valid;
     }
 
-    public void updateTask(int id, String task){
+    public void updateTask(Task task){
+        SimpleDateFormat dateDeadlineFormat = new SimpleDateFormat("dd-MM-yyyy");
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_TODO_TASK, task);
-        db.update(TABLE_TODO, values, "ID=?", new String[]{String.valueOf(id)});
+        values.put(KEY_TASK_TITLE, task.getTitle());
+        values.put(KEY_TASK_DEADLINE, dateDeadlineFormat.format(task.getDeadline()) );
+        db.update(TABLE_TASK, values, "ID=?", new String[]{String.valueOf(task.getId())});
     }
 
     public void updateStatus(int id, int status){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_TODO_STATUS, status);
-        db.update(TABLE_TODO, values, "ID=?", new String[]{String.valueOf(id)});
+        values.put(KEY_TASK_STATUS, status);
+        db.update(TABLE_TASK, values, "ID=?", new String[]{String.valueOf(id)});
+    }
+
+    public void updateTopic(Topic topic){
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TOPIC_TITLE, topic.getTitle());
+        values.put(KEY_TOPIC_DESCRIPTION, topic.getDescription());
+        db.update(TABLE_TOPIC, values, "ID=?", new String[]{String.valueOf(topic.getId())});
     }
 
     public void deleteTask(int id){
         db = this.getWritableDatabase();
-        db.delete(TABLE_TODO, "ID=?", new String[]{String.valueOf(id)});
+        db.delete(TABLE_TASK, "ID=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void deleteTopic(int id){
+        db = this.getWritableDatabase();
+        db.delete(TABLE_TOPIC, "ID=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -143,17 +193,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
+
     @SuppressLint("Range")
-    public List<ToDoModel> getTaskByUserID(int userID){
+    public List<Topic> getTopicByUserID(int userID){
         db = this.getWritableDatabase();
         Cursor cursor = null;
-        List<ToDoModel> modelList = new ArrayList<>();
+        List<Topic> topicList = new ArrayList<>();
 
         db.beginTransaction();
         try{
-            cursor = db.query(TABLE_TODO,
+            cursor = db.query(TABLE_TOPIC,
                     null,
-                    KEY_TODO_USER_ID + "=?",
+                    KEY_TOPIC_USER_ID + "=?",
                     new String[]{String.valueOf(userID)},
                     null,
                     null,
@@ -161,11 +212,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             if (cursor != null){
                 if(cursor.moveToFirst()){
                     do {
-                        ToDoModel task = new ToDoModel();
-                        task.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
-                        task.setTask(cursor.getString(cursor.getColumnIndex(KEY_TODO_TASK)));
-                        task.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TODO_STATUS)));
-                        modelList.add(task);
+                        Topic topic = new Topic();
+                        topic.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                        topic.setTitle(cursor.getString(cursor.getColumnIndex(KEY_TOPIC_TITLE)));
+                        topic.setDescription(cursor.getString(cursor.getColumnIndex(KEY_TOPIC_DESCRIPTION)));
+                        topicList.add(topic);
 
                     }
                     while (cursor.moveToNext());
@@ -176,11 +227,46 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             db.endTransaction();
             cursor.close();
         }
-        int i=0;
-        for (ToDoModel toDoModel : modelList){
-            System.out.println("I: "+i);
-            i++;
+        return topicList;
+    }
+
+    @SuppressLint("Range")
+    public List<Task> getTaskByTopicID(int topicID){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        db = this.getWritableDatabase();
+        Cursor cursor = null;
+        List<Task> taskList = new ArrayList<>();
+
+        db.beginTransaction();
+        try{
+            cursor = db.query(TABLE_TASK,
+                    null,
+                    KEY_TASK_TOPIC_ID + "=?",
+                    new String[]{String.valueOf(topicID)},
+                    null,
+                    null,
+                    null);
+            if (cursor != null){
+                if(cursor.moveToFirst()){
+                    do {
+                        Task task = new Task();
+                        task.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                        task.setTitle(cursor.getString(cursor.getColumnIndex(KEY_TASK_TITLE)));
+                        task.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TASK_STATUS)));
+                        Date date = new Date();
+                        task.setDeadline(dateFormat.parse(cursor.getString(cursor.getColumnIndex(KEY_TASK_DEADLINE))));
+                        taskList.add(task);
+
+                    }
+                    while (cursor.moveToNext());
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+            cursor.close();
         }
-        return modelList;
+        return taskList;
     }
 }

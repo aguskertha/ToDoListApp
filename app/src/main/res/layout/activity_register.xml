@@ -19,7 +19,7 @@
             android:layout_marginTop="40dp"
             android:layout_weight="1"
             android:fontFamily="@font/lato_bold"
-            android:text="To Do App"
+            android:text="TwoDo"
             android:textAlignment="center"
             android:textColor="#ECECEC"
             android:textSize="48sp" />

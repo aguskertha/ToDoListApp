@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.amitshekhar.DebugDB;
-import com.example.todoapp.Adapter.ToDoAdapter;
-import com.example.todoapp.Model.ToDoModel;
+import com.example.todoapp.Adapter.TopicAdapter;
+import com.example.todoapp.Model.Topic;
 import com.example.todoapp.Utils.DataBaseHelper;
 import com.example.todoapp.databinding.ActivityMainBinding;
 
@@ -26,8 +26,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements OnDialogCloseListener{
 
     private DataBaseHelper db;
-    private List<ToDoModel> modelList;
-    private ToDoAdapter toDoAdapter;
+    private List<Topic> topicList;
+    private TopicAdapter topicAdapter;
     private ActivityMainBinding binding;
     private SharedPreferences getSession;
     private int userID;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.toolbar.setTitle("Task To Do List");
+        binding.toolbar.setTitle("TwoDo");
         setSupportActionBar(binding.toolbar);
 
         DebugDB.getAddressLog();
@@ -49,22 +49,19 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         if(getSession.contains(LoginActivity.SESSION_USER_ID)) {
 
             this.userID = getSession.getInt(LoginActivity.SESSION_USER_ID, 0);
-            binding.tvName.setText(getSession.getString(LoginActivity.SESSION_USER_FULLNAME, null)+" - Task");
-            modelList = new ArrayList<>();
-            toDoAdapter = new ToDoAdapter(db, MainActivity.this);
+            binding.tvName.setText(getSession.getString(LoginActivity.SESSION_USER_FULLNAME, null)+" - Topic");
+            topicList = new ArrayList<>();
+            topicList = db.getTopicByUserID(userID);
+            Collections.reverse(topicList);
 
-            binding.rvList.setHasFixedSize(true);
-            binding.rvList.setLayoutManager(new LinearLayoutManager(this));
-            binding.rvList.setAdapter(toDoAdapter);
+            topicAdapter = new TopicAdapter(topicList, db);
+            binding.rvTopic.setLayoutManager(new LinearLayoutManager(this));
+            binding.rvTopic.setAdapter(topicAdapter);
 
-            modelList = db.getTaskByUserID(userID);
-            Collections.reverse(modelList);
-            toDoAdapter.setTask(modelList);
-
-            binding.flAdd.setOnClickListener(new View.OnClickListener() {
+            binding.flAddTopic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AddNewTask.newInstance(userID).show(getSupportFragmentManager(), AddNewTask.TAG);
+                    AddNewTopic.newInstance(userID).show(getSupportFragmentManager(), AddNewTopic.TAG);
                 }
             });
         }
@@ -72,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
 
     @Override
     public void onDialogClose(DialogInterface dialogInterface) {
-        modelList = db.getTaskByUserID(userID);
-        Collections.reverse(modelList);
-        toDoAdapter.setTask(modelList);
-        toDoAdapter.notifyDataSetChanged();
+        topicList = db.getTopicByUserID(userID);
+        Collections.reverse(topicList);
+        topicAdapter.setTopicList(topicList);
+        topicAdapter.notifyDataSetChanged();
     }
 
     @Override

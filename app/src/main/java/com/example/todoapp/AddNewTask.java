@@ -1,6 +1,7 @@
 package com.example.todoapp;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,40 +11,52 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.todoapp.Model.ToDoModel;
+import com.example.todoapp.Model.Task;
+import com.example.todoapp.Model.Topic;
 import com.example.todoapp.Utils.DataBaseHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class AddNewTask extends BottomSheetDialogFragment {
-    public static final String TAG = "AddNewTask";
-    private EditText edtTask;
-    private Button btnAddTask;
-    private DataBaseHelper db;
-    private int userID;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-    public AddNewTask(int userID){
-        this.userID = userID;
+public class AddNewTask extends BottomSheetDialogFragment implements DatePickerDialog.OnDateSetListener{
+    public static final String TAG = "AddNewTask";
+    private EditText edtTaskTitle;
+    private EditText edtTaskDate;
+    private Button btnAddTask;
+    private ImageButton btnDatePicker;
+    private DataBaseHelper db;
+    private View view;
+    boolean isUpdate = false;
+    private int topicID;
+    private Date dateDeadline;
+    public AddNewTask(int topicID){
+        this.topicID = topicID;
     }
 
     public AddNewTask(){
-        this.userID = 0;
+
     }
 
-    public static AddNewTask newInstance(int userID){
-        return new AddNewTask(userID);
+    public static AddNewTask newInstance(int topicID){
+        return new AddNewTask(topicID);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.add_new_task_layout, container, false);
+        view = inflater.inflate(R.layout.add_new_task_layout, container, false);
         return view;
     }
 
@@ -51,25 +64,40 @@ public class AddNewTask extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        edtTask = view.findViewById(R.id.edt_task);
-        btnAddTask = view.findViewById(R.id.btn_save);
+        edtTaskTitle = view.findViewById(R.id.edt_task_title);
+        edtTaskDate = view.findViewById(R.id.edt_task_date);
+        btnAddTask = view.findViewById(R.id.btn_save_task);
+        btnDatePicker = view.findViewById(R.id.btn_date_picker);
+        btnDatePicker = view.findViewById(R.id.btn_date_picker);
 
         db = new DataBaseHelper(getActivity());
 
-        boolean isUpdate = false;
-
         Bundle bundle = getArguments();
         if(bundle != null){
-            Toast.makeText(getContext(), "ADA BUNDLE", Toast.LENGTH_SHORT).show();
             isUpdate = true;
-            String task = bundle.getString("task");
-            edtTask.setText(task);
-            if(task.length() > 0){
-                btnAddTask.setEnabled(false);
-            }
+
+            Task task = bundle.getParcelable(Task.EXTRA_TASK);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            edtTaskTitle.setText(task.getTitle());
+            edtTaskDate.setText(dateFormat.format(task.getDeadline()));
+            isButtonAddEnabled();
         }
 
-        edtTask.addTextChangedListener(new TextWatcher() {
+        btnDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        view.getContext(),
+                        AddNewTask.this::onDateSet,
+                        Calendar.getInstance().get(Calendar.YEAR),
+                        Calendar.getInstance().get(Calendar.MONTH),
+                        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                );
+                datePickerDialog.show();
+            }
+        });
+
+        edtTaskTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -77,14 +105,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if(charSequence.toString().equals("")){
-                    btnAddTask.setEnabled(false);
-                    btnAddTask.setBackgroundColor(Color.GRAY);
-                }
-                else{
-                    btnAddTask.setEnabled(true);
-                    btnAddTask.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                }
+                isButtonAddEnabled();
             }
 
             @Override
@@ -93,21 +114,31 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
-        boolean finalIsUpdate = isUpdate;
         btnAddTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = edtTask.getText().toString().trim();
+                String taskTitle = edtTaskTitle.getText().toString().trim();
+                String taskDeadline = edtTaskDate.getText().toString().trim();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-                if(finalIsUpdate){
-                    db.updateTask(bundle.getInt("id"), text);
+                if(isUpdate){
+                    if(bundle != null) {
+                        Task task = bundle.getParcelable(Task.EXTRA_TASK);
+                        task.setTitle(taskTitle);
+                        try {
+                            task.setDeadline(dateFormat.parse(taskDeadline));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        db.updateTask(task);
+                    }
                 }
                 else{
-//                Toast.makeText(getContext(), userID, Toast.LENGTH_SHORT).show();
-                    ToDoModel task = new ToDoModel();
-                    task.setUserID(userID);
-                    task.setTask(text);
+                    Task task = new Task();
+                    task.setTopicID(topicID);
+                    task.setTitle(taskTitle);
                     task.setStatus(0);
+                    task.setDeadline(dateDeadline);
                     db.insertTask(task);
                 }
                 dismiss();
@@ -116,12 +147,35 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
     }
 
+    public void isButtonAddEnabled(){
+        if(edtTaskTitle.getText().toString().isEmpty() ){
+            btnAddTask.setEnabled(false);
+        }
+        else {
+            btnAddTask.setEnabled(true);
+        }
+    }
+
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
         Activity activity = getActivity();
         if(activity instanceof OnDialogCloseListener){
             ((OnDialogCloseListener) activity).onDialogClose(dialog);
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String textDate = dateFormat.format(calendar.getTime());
+        try {
+            dateDeadline = dateFormat.parse(textDate);
+            edtTaskDate.setText(textDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }
